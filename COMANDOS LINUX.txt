@@ -1,0 +1,252 @@
+192.168.10.223
+root
+England4545-
+npm run build:win:publish
+
+
+
+INICAR SERVER: pm2 start estado_sip_backend
+
+VER LISTA DE SERVERS:pm2 list
+
+REINICAR SERVER: pm2 restart estado_sip 
+
+DETENER SERVER: pm2 stop estado_sip_backend 
+
+INICAR SERVER AL ENCENDER MAQUINA: pm2 startup systemd
+pm2 save
+
+PARA REVERTIR LO DE INCIAR SERVER AL ENCENDER LA MAQUINA: pm2 stop all
+
+SI SOLO SE QUIERE REVERTIR UNO EJEMPLO SERVER: pm2 stop turnos-server
+
+
+
+
+INICAR FRONT TURNERO
+
+
+cd /opt/turnero/frontend
+
+pm2 start "npm run dev -- --host" --name "turnos-frontend"
+
+pm2 list                     # Ver todos los procesos
+pm2 logs turnos-frontend     # Ver logs del frontend
+pm2 stop turnos-frontend     # Detener el frontend
+pm2 delete turnos-frontend   # Eliminarlo de PM2
+
+pm2 delete inventario-km
+REINICAR SERVER: pm2 restart inventario-backend 
+pm2 delete inventario
+
+
+# Levantar backend 
+pm2 start /opt/turnero/server.js --name "turnos-server"
+
+# Levantar frontend 
+cd /opt/turnero/frontend
+pm2 start "npm run dev -- --host 0.0.0.0" --name "turnos-frontend"
+
+# Guardar lista para arranque automático
+pm2 save
+
+
+
+VER USUARIOS EDITAR Y BORRAR
+
+mariadb -u root -p
+  
+USE turnosdb;  USE estado_sip;   USE inventario_km;  USE gestor_tareas;
+
+\! clear :limpiar consola db
+
+DESCRIBE validations; SELECT * FROM historial_validaciones;
+
+SHOW TABLES;
+SELECT * FROM validaciones_enviadas;
+SELECT * FROM estados_turno;
+SELECT * FROM users;
+SELECT * FROM  horarios_personas;
+
+
+VER COLDOWN POR USUARIO
+
+SELECT 
+c.id,
+u.nombre,
+u.username,
+c.fin_cooldown
+FROM cooldowns c
+JOIN users u ON u.id = c.user_id
+WHERE c.user_id = 26;
+
+
+ELIMINAR COLDOWN 
+
+DELETE FROM cooldowns
+WHERE id = 980;
+
+            CAMBIAR DATOS
+UPDATE users
+SET password = 'D1Nniv4aL23' 
+WHERE id = 38; 
+
+
+******************* VER TURNOS PARA CORREGIR FALLOS ID USAURIO********
+SELECT et.*
+FROM estados_turno et
+JOIN turnos t ON et.turno_id = t.id
+WHERE t.user_id = 1
+ORDER BY et.hora_inicio;
+
+BORRAR TIEMPO PERDIDO 
+
+DELETE FROM estados_turno
+WHERE id = 13449;
+
+
+    CORREGIT TIEMPOS MALOS
+UPDATE estados_turno
+SET hora_inicio = DATE_SUB(hora_inicio, INTERVAL 540 SECOND)
+WHERE id = 16890;
+
+
+
+REDUCIR
+
+UPDATE estados_turno
+SET 
+  hora_fin = DATE_SUB(hora_fin, INTERVAL 2 MINUTE),
+  duracion_segundos = TIMESTAMPDIFF(
+      SECOND,
+      hora_inicio,
+      DATE_SUB(hora_fin, INTERVAL 2 MINUTE)
+  )
+WHERE id = 20231;
+
+
+HORA DE INICIO REDUCIR 
+
+UPDATE estados_turno
+SET hora_inicio = '2026-03-10 08:00:57'
+WHERE turno_id = 2626
+AND estado = 'trabajando';
+
+
+
+VER ESTADOS SIN FINALIZAR 
+SELECT et.*
+FROM estados_turno et
+JOIN turnos t ON et.turno_id = t.id
+WHERE t.user_id = 1
+  AND et.hora_fin IS NULL
+ORDER BY et.hora_inicio;
+
+
+
+
+BORRAR SUAURIO CON ID
+DELETE FROM users WHERE id = 37;  -- reemplaza 3 con el ID del usuario
+
+CAMBIAR CORREO 
+UPDATE users
+SET username = 'nuevo_correo@dominio.com'
+WHERE id = 6; 
+
+
+CAMBIAR CONTRASEÑA
+UPDATE users
+SET password = 'NuevaContraseña123'
+WHERE id = 6;
+
+UPDATE users
+SET nombre = 'Diego Alejandro Garcia Perez'
+WHERE id = 36;
+
+UPDATE users
+SET departamento = 'Servicio Al Cliente'
+WHERE id = 9;
+
+Servicio Al Cliente 
+Supervisor 
+Ventas 
+Procesamiento
+
+
+
+             VALIDACION SERVER.PY
+
+CREAR .EXE xvfb-run npm run build:win
+
+INICIAR SERVIDOR: systemctl start estado_sip.service
+
+VER LOGS: journalctl -u estado_sip.service -f
+
+REINICAR SERVER: systemctl restart estado_sip.service
+
+DETENER SERVER: systemctl stop estado_sip.service
+
+VER ESTADO ACTUAL: systemctl status estado_sip.service
+
+HABILITAR INICIO AUTOMATICO: systemctl enable estado_sip.service
+
+DESACTIVAR INICIO AUTOMATICO: systemctl disable estado_sip.service
+
+              HISTORIAL VALIDACIONES
+
+INICAR MINI SERVER: systemctl start validaciones.service
+DETENER : systemctl stop validaciones.service
+REINICAR : systemctl restart validaciones.service
+VER ESTADO : systemctl status validaciones.service
+
+ELIMINAR SI HAY FALLAS CRITICAS
+systemctl stop validaciones.service
+systemctl disable validaciones.service
+rm /etc/systemd/system/validaciones.service
+systemctl daemon-reload
+
+
+INVENTARIO CAMBIAR KM
+
+UPDATE inventario
+SET km = 'KM0677'
+WHERE km = 'KM0579';
+
+
+
+GESTOR DE TAREAS 
+
+npm run build --- CAMBIAR VERSION EN package.json 1.0......
+CREAR EL .EXE xvfb-run npm run build
+ 
+
+pm2 start npm --name "gestor-notas" -- run start-server 
+
+
+
+
+
+\\192.168.10.215
+
+felipe.pava
+Dinamarc49090+!
+
+
+
+
+
+pagina web 
+
+🔄 Ejecutando migración de usuarios...
+✅ Tabla 'users' creada exitosamente
+✅ Usuario 'admin' creado/actualizado
+   📧 Email: info@kmdinival.com
+   🔒 Password: Admin123!@#
+   🛡️ Hasheada con Argon2
+✅ Migración completada
+
+
+
+
+
+
